@@ -11,7 +11,7 @@ namespace Project_Eticaret.CORE.Service
     public interface ICoreService<T> where T : CoreEntity
     {
         void Add(T item);
-        void Add(List<T> item);
+        void Add(List<T> items);
         void Update(T item);
         void Remove(T item);
         void Remove(Guid id);
