@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "List";
+}
+
+@model IEnumerable<Project_Eticaret.MODEL.Entites.Product>
+
+<div class="col-lg-8">
+    <table class="table table-borderless table-hover>
+        <thead>
+            <tr>
+                <th>Fotoğraf</th>
+                <th>Ürün Adı</th>
+                <th>Fiyatı</th>
+                <th>Detay</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><img src="@item.ImagePath" style="width:60px; height:60px;" /></td>
+                    <td>@item.Name</td>
+                    <td>@item.Price</td>
+                    <td><a href="/Product/Detail/@item.ID">Detayları Göster</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

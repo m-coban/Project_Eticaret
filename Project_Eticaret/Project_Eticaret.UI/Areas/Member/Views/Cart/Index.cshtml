@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@model List<Project_Eticaret.UI.Areas.Member.Data.VM.ProductVM>
+<div class="row" style="margin-top:100px;">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-12">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ürün ID</th>
+                            <th>Ürün Adı</th>
+                            <th>Fiyat</th>
+                            <th>Stok Adet</th>
+                            <th>Adet</th>
+                            <th>Toplam Fiyat</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* Burası jQuery ile dolduruluyor *@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-6 col-lg-offset-6">
+                <label>Ödemeniz Gereken Toplam Tutar: <span id="totalCount"></span> TL</label>
+            </div>
+        </div>
+    </div>
+</div>
+@* Layout içinde scripti çekemeyeceği için intellisense çalışmayacaktır.
+    Geçici olarak burada kullandıktan sonra kaldırabilirsiniz.*@
+@*<script src="~/Scripts/jquery-1.10.2.js"></script>*@
+
+<script type="text/javascript">
+        $(function () {
+            $('[data-toggle = "tooltip"]').tooltip()
+        });
+
+        $(document).ready(function () {
+
+            // Sayfa yüklendikten yarım saniye sonra, istekte bulunularak, data tablo içerine dolduruluyor.
+            setTimeout(function () {$.Cart.List()}, 500);
+
+            $.Cart = {
+                List: function () {
+                    $.getJSON("https://localhost:44325/Member/Cart/List", function (data) {
+                        $("table tbody tr").remove();
+                        var count = Object.keys(data).length;
+                        var totalCount = 0;
+
+                        if (count > 0) {
+                            $.each(data, function (key, item) {
+                                $("table tbody").append(
+                                    `<tr><td style = 'line-height:40px;' > 
+                                ${item.ID} </td ><td style='line-height:40px;'> 
+                                ${item.ProductName}</td>                            <td style='line-height:40px;'> 
+                                ${item.UnitPrice} </td>                            <td style='line-height:40px;'>
+                                ${item.UnitsInStock} </td>                            <td style='line-height:40px;'>
+                                ${item.Quantity} </td>                            <td style='line-height:40px;'>
+                                ${(item.Quantity * item.UnitPrice)} </td>                            
+                                <td>
+                                <img onclick='$.Cart.Increase(" ${item.ID} ")' title='Arttır' src='/Content/Images/Add.png' width='40' height='40' /> 
+                                <img onclick='$.Cart.Decrease("${item.ID}")' title='Azalt' src='/Content/Images/Remove.png' width='40' height='40' />
+                                <img onclick='$.Cart.Remove("${item.ID}")' title='Sepetten Sil' src='/Content/Images/Shopping.png' width='40' height='40' />
+                                </td>
+                                </tr >`
+                                )
+                                totalCount += (item.Quantity * item.UnitPrice);
+                            });
+                        }
+                        $("#totalCount").html(totalCount);
+                    });
+                },
+                Increase: function (ID) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: "Json",
+                        url: "@Url.Action("IncreaseCart","Cart")/" + ID,
+                        success: function (data) {
+                            $.Cart.List();
+                        }
+                    })
+                },
+                Decrease: function (ID) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: "Json",
+                        url: "@Url.Action("DecreaseCart", "Cart")/" + ID,
+                        success: function (data) {
+                            $.Cart.List();
+                        }
+                    })
+                },
+                Remove: function (ID) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: "Json",
+                        url: "@Url.Action("Remove", "Cart")/" + ID,
+                        success: function (data) {
+                            $.Cart.List();
+                        }
+                    })
+                }
+            }
+        });
+</script>
+

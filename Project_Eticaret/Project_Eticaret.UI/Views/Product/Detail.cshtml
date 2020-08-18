@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "Detail";
+}
+@model Project_Eticaret.MODEL.Entites.Product
+
+@section scripts1{
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/Cart.js"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.add-to-cart').on('click', function () {
+            var id = "@Model.ID;
+        $.ajax({
+            type: "POST",
+            dataType: "Json",
+            url: "@Url.Action("Add","Member/Cart")/" + id,
+            success: function (data) {
+                // Başarılı response döndüğünde çalıştırılacak fonksiyon. Başarıyla eklendi mesajı vb gösterilebilir.
+            }
+        })
+        });
+    });
+
+    </script>
+}
+<!--================Single Product Area =================-->
+<div class="product_image_area section_padding">
+    <div class="container">
+        <div class="row s_product_inner">
+            <div class="col-lg-5">
+                <div class="product_slider_img">
+                    <div id="vertical">
+                        <div data-thumb="img/product_details/prodect_details_1.png">
+                            <img src="@Model.ImagePath" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <div class="s_product_text">
+                    <h3>@Model.Name</h3>
+                    <h2>@Model.Price</h2>
+                    <ul class="list">
+                        <li>
+                            <a class="active" href="#">
+                                <span>Kategori</span> : @Model.SubCategory.Name
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"> <span>Stok Durumu</span> : @Model.UnitInStock</a>
+                        </li>
+                    </ul>
+                    <p>
+                        Açıklamalar buraya gelebilir.
+                    </p>
+                    <div class="card_area">
+                        @if (!string.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
+                        {
+                            <div class="add_to_cart">
+                                <a href="javascript:void(0);" id="@Model.ID" class="btn_3 add-to-cart">Sepete Ekle</a>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--================End Single Product Area =================-->
